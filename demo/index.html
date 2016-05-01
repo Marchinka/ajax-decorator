@@ -12,30 +12,37 @@
 
     <script type="text/javascript">
       window.throttledAjaxDecorator = new AjaxDecorator({
-          originalService: $,
-          throttle: 300
+        originalService: $,
+        throttle: 300
       });
 
       window.baseAjaxDecorator = new AjaxDecorator({
-          originalService: $
+        originalService: $
       });
 
       window.onSuccessAjaxDecorator = new AjaxDecorator({
-          originalService: $,
-          ajaxSuccess: function () {
-            alert("ajax success event");
-          },
-          beforeSend: function(result) {
-            alert("before send event")
-          }
+        originalService: $,
+        ajaxSuccess: function () {
+          alert("ajax success event");
+        },
+        beforeSend: function(result) {
+          alert("before send event")
+        }
       });
 
       window.onErrorAjaxDecorator = new AjaxDecorator({
-          originalService: $,
-          ajaxComplete: function () {
-            alert("ajax complete event");
-          }
-      });      
+        originalService: $,
+        ajaxComplete: function () {
+          alert("ajax complete event");
+        }
+      });
+
+      window.cachingAjaxDecorator = new AjaxDecorator({
+        originalService: $,
+        optimizedRequest: [
+          { url: "ata-to-cach", regexMatch: true }
+        ]
+      });
     </script>
 
     <!-- Delay Calls -->
@@ -112,7 +119,7 @@
       }
     </script>    
 
-    <!-- Ajax Call with success event -->
+    <!-- Ajax Call with error event -->
     <h2>Ajax Call With Ajax Error Event</h2>
     <button onclick="errorTest()">On Ajax Error Test</button>
     <p>Click to see that one ajax call is performed.</p>
@@ -128,7 +135,38 @@
           }
         });
       }
-    </script> 
+    </script>
 
+    <!-- Ajax Call with chached data -->
+    <h2>Ajax Call With Cache Enabled</h2>
+    <button onclick="cacheTest()">Ajax Call To Optimized Url</button>
+    <button onclick="noCacheTest()">Ajax Call To Not Optimized Url</button>
+    <button onclick="clearCache()">Clear Cache</button>
+    <p>Click to see that the ajax call is performed just the first time.</p>
+    <script type="text/javascript">
+      function cacheTest () {
+        cachingAjaxDecorator.ajax({
+          url: "data-to-cache.json",
+          method: "GET",
+          success: function(result) {
+            alert("call (with cache enabled on this url) ended successfully with result " + JSON.stringify(result));
+          }
+        });
+      }
+
+      function noCacheTest () {
+        cachingAjaxDecorator.ajax({
+          url: "test-data.json",
+          method: "GET",
+          success: function(result) {
+            alert("not cached call performed successfully")
+          }
+        });
+      }
+
+      function clearCache () {
+        cachingAjaxDecorator.clearCache();
+      }
+    </script>
     </body>
 </html>
