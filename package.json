@@ -1,0 +1,20 @@
+{
+  "name": "ajaxdecorator",
+  "version": "1.0.0",
+  "description": "A $.ajax extention ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jquery": "^2.2.3",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-spies": "^0.7.1",
+    "mocha": "^2.4.5"
+  }
+}

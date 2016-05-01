@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Ajax decorator demo</title>
+  </head>
+  <body>
+    <h1>Ajax Decorator Demo</h1>
+
+    <script type="text/javascript" src="./../node_modules/underscore/underscore.js"></script>
+    <script type="text/javascript" src="./../node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="./../src/ajax-decorator.js"></script>
+
+    <script type="text/javascript">
+      window.throttledAjaxDecorator = new AjaxDecorator({
+          originalService: $,
+          throttle: 300
+      });
+
+      window.baseAjaxDecorator = new AjaxDecorator({
+          originalService: $
+      });
+
+      window.onSuccessAjaxDecorator = new AjaxDecorator({
+          originalService: $,
+          ajaxSuccess: function () {
+            alert("ajax success event");
+          },
+          beforeSend: function(result) {
+            alert("before send event")
+          }
+      });
+
+      window.onErrorAjaxDecorator = new AjaxDecorator({
+          originalService: $,
+          ajaxComplete: function () {
+            alert("ajax complete event");
+          }
+      });      
+    </script>
+
+    <!-- Delay Calls -->
+    <h2>Ajax Call With Delay</h2>
+    <button onclick="timeoutTest()">Timeout Test</button>
+    <p>Click to see that one ajax call executed after 3 seconds. This options negate throttle.</p>
+    <script type="text/javascript">
+      function timeoutTest () {
+        baseAjaxDecorator.ajax({
+          url: "test-data.json",
+          delay: 3000,
+          success: function(result) {
+            alert("call with timeout performed successfully")
+          }
+        });
+      }
+    </script>
+
+    <!--Multiple throttle calls to same url -->
+    <h2>Ajax Call With Throttle</h2>
+    <button onclick="throttleTest()">Throttle Test</button>
+    <p>Click repeatedly to see that one ajax call is performed.</p>
+    <script type="text/javascript">
+      function throttleTest () {
+        throttledAjaxDecorator.ajax({
+          url: "throttle-test-data.json",
+          success: function(result) {
+            alert("call with throttle performed successfully")
+          }
+        });
+      }
+    </script>
+
+    <!--Multiple throttle calls to different urls -->
+    <h2>Ajax Call With Throttle On Different Urls</h2>
+    <button onclick="firstUrlThrottleTest()">First Throttle Test</button>
+    <button onclick="secondUrlThrottleTest()">Second Throttle test</button>
+    <p>Click on first button, then on second button and on first button again. You will see the second call executed before the first. These calls override base throttle delay in direct call with a much more longer one (3 seconds).</p>
+    <script type="text/javascript">
+      function firstUrlThrottleTest () {
+        throttledAjaxDecorator.ajax({
+          url: "throttle-test-data.json",
+          throttle: 3000,
+          success: function(result) {
+            alert("first call with throttle performed successfully")
+          }
+        });
+      }
+    </script>
+    <script type="text/javascript">
+      function secondUrlThrottleTest () {
+        throttledAjaxDecorator.ajax({
+          url: "second-throttle-test-data.json",
+          throttle: 3000,
+          success: function(result) {
+            alert("second call with throttle performed successfully")
+          }
+        });
+      }
+    </script>
+
+    <!-- Ajax Call with success event -->
+    <h2>Ajax Call With Ajax Success Events</h2>
+    <button onclick="successTest()">On Ajax Success Test</button>
+    <p>Click to see that one ajax call is performed.</p>
+    <script type="text/javascript">
+      function successTest () {
+        onSuccessAjaxDecorator.ajax({
+          url: "test-data.json",
+          success: function(result) {
+            alert("call ended successfully with result " + JSON.stringify(result));
+          }
+        });
+      }
+    </script>    
+
+    <!-- Ajax Call with success event -->
+    <h2>Ajax Call With Ajax Error Event</h2>
+    <button onclick="errorTest()">On Ajax Error Test</button>
+    <p>Click to see that one ajax call is performed.</p>
+    <script type="text/javascript">
+      function errorTest () {
+        onErrorAjaxDecorator.ajax({
+          url: "NOT_EXISTING-test-data.json",
+          error: function(result) {
+            alert("call ended with error " + JSON.stringify(result));
+          },
+          ajaxError: function () {
+            alert("ajax error event");
+          }
+        });
+      }
+    </script> 
+
+    </body>
+</html>
